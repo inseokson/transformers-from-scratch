@@ -1,0 +1,23 @@
+[project]
+name = "transformers-from-scratch"
+version = "0.0.0a"
+dependencies = [
+    "torch",
+]
+
+[project.optional-dependencies]
+develop = [
+    "black",
+    "isort",
+    "flake8",
+    "pytest",
+    "pip-tools",
+]
+
+[tool.black]
+line_length = 120
+
+[tool.isort]
+line_length = 120
+multi_line_output = 3
+include_trailing_comma = true
