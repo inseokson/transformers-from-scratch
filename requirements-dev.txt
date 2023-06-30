@@ -34,6 +34,8 @@ mypy-extensions==1.0.0
     # via black
 networkx==3.1
     # via torch
+numpy==1.25.0
+    # via transformers-from-scratch (pyproject.toml)
 packaging==23.1
     # via
     #   black

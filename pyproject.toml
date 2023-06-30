@@ -3,6 +3,7 @@ name = "transformers-from-scratch"
 version = "0.0.0a"
 dependencies = [
     "torch",
+    "numpy",
 ]
 
 [project.optional-dependencies]
