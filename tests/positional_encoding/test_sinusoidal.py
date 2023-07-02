@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 import torch
 
-from src.positional_encoding.sinusoidal import SinusoidalPositionalEncoder
+from src.positional_encoding import SinusoidalPositionalEncoder
 
 
 @pytest.fixture
