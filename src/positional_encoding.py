@@ -5,6 +5,8 @@ from torch import nn
 class SinusoidalPositionalEncoder(nn.Module):
     @torch.no_grad()
     def __init__(self, d_model: int, max_length: int):
+        super().__init__()
+
         if (d_model <= 0) or (max_length <= 0):
             raise ValueError("d_model and max_length must be positive integer.")
 
