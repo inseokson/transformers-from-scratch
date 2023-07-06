@@ -23,6 +23,14 @@ def test_scaled_dot_product_single_head_single_batch():
             ]
         ]
     )
+    mask = torch.tensor(
+        [
+            [
+                [False, True],
+                [False, False],
+            ]
+        ]
+    )
     actual_without_head = attention.forward(q, k, v)
     expected_without_head = torch.tensor(
         [
@@ -33,10 +41,21 @@ def test_scaled_dot_product_single_head_single_batch():
         ]
     )
 
+    actual_with_mask = attention.forward(q, k, v, mask)
+    expected_with_mask = torch.tensor(
+        [
+            [
+                [0.2, 0.5, -0.9],
+                [-0.193750695, 0.237499537, 0.346877202],
+            ]
+        ]
+    )
+
     actual_with_head = attention.forward(q.unsqueeze(0), k.unsqueeze(0), v.unsqueeze(0))
     expected_with_head = expected_without_head.unsqueeze(0)
 
     np.testing.assert_array_almost_equal(actual_without_head, expected_without_head)
+    np.testing.assert_array_almost_equal(actual_with_mask, expected_with_mask)
     np.testing.assert_array_almost_equal(actual_with_head, expected_with_head)
 
 

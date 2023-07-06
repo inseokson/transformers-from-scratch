@@ -15,7 +15,7 @@ class ScaledDotProductAttention(nn.Module):
         k_t = k.transpose(-2, -1)
         score = q @ k_t / self.normalize_factor
         if mask is not None:
-            score = torch.masked_fill(score, mask)
+            score = torch.masked_fill(score, mask, -torch.inf)
 
         attention_prob = self.softmax(score)
         attention_value = attention_prob @ v
