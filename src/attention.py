@@ -4,14 +4,14 @@ from torch import nn
 
 class ScaledDotProductAttention(nn.Module):
     @torch.no_grad()
-    def __init__(self, dim_attention):
+    def __init__(self, d_attention, *args, **kwargs):
         super().__init__()
-        self.normalize_factor = dim_attention**0.5
+        self.normalize_factor = d_attention**0.5
         self.softmax = nn.Softmax(dim=-1)
 
     def forward(self, q, k, v, mask=None):
-        # q, k, v: (n_batch, seqeunce_length, dim_attention) or \
-        #  (n_batch, n_head, sequence_length, dim_attention)
+        # q, k, v: (n_batch, seqeunce_length, d_attention) or \
+        #  (n_batch, n_head, sequence_length, d_attention)
         k_t = k.transpose(-2, -1)
         score = q @ k_t / self.normalize_factor
         if mask is not None:
