@@ -154,8 +154,18 @@ def test_scaled_dot_product_multi_head_multi_batch():
             ],
         ]
     )
-    actual = attention.forward(q, k, v)
-    expected = torch.tensor(
+
+    mask = torch.tensor(
+        [
+            [
+                [False, True],
+                [False, False],
+            ]
+        ]
+    )
+
+    actual_without_mask = attention.forward(q, k, v)
+    expected_without_mask = torch.tensor(
         [
             [
                 [
@@ -180,4 +190,31 @@ def test_scaled_dot_product_multi_head_multi_batch():
         ]
     )
 
-    np.testing.assert_array_almost_equal(actual, expected)
+    actual_with_mask = attention.forward(q, k, v, mask=mask)
+    expected_with_mask = torch.tensor(
+        [
+            [
+                [
+                    [0.2, 0.5, -0.9],
+                    [-0.193750695, 0.237499537, 0.346877202],
+                ],
+                [
+                    [-0.3, -0.5, 1.0],
+                    [-0.356884201, -0.272463197, 1.170652602],
+                ],
+            ],
+            [
+                [
+                    [-0.1, -0.1, 1.0],
+                    [0.326412612, -0.110400308, 1.031200923],
+                ],
+                [
+                    [-0.1, 0.4, 1.0],
+                    [0.035423251, 0.4, 0.898432562],
+                ],
+            ],
+        ]
+    )
+
+    np.testing.assert_array_almost_equal(actual_without_mask, expected_without_mask)
+    np.testing.assert_array_almost_equal(actual_with_mask, expected_with_mask)
