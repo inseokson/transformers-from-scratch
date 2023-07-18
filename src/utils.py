@@ -5,12 +5,12 @@ import pandas as pd
 from torch.utils.data import Dataset
 
 
-class TabularDatasetForTranslator(Dataset):
+class TabularDataset(Dataset):
     def __init__(
         self,
         path: Union[PosixPath, str],
-        from_lang_col: str,
-        to_lang_col: str,
+        source_column: str,
+        target_column: str,
         *,
         bos_token: str = None,
         eos_token: str = None,
@@ -26,15 +26,15 @@ class TabularDatasetForTranslator(Dataset):
         else:
             raise ValueError(f"{str(path)} has not proper file extension")
 
-        self.from_lang = df[from_lang_col].to_numpy().flatten()
-        self.to_lang = df[to_lang_col].to_numpy().flatten()
+        self.sources = df[source_column].to_numpy().flatten()
+        self.targets = df[target_column].to_numpy().flatten()
 
         if add_bos_eos_token:
             self.bos_token = bos_token if bos_token is not None else "<bos>"
             self.eos_token = eos_token if eos_token is not None else "<eos>"
 
-            self.from_lang = [self._add_bos_eos_token(sentence) for sentence in self.from_lang]
-            self.to_lang = [self._add_bos_eos_token(sentence) for sentence in self.to_lang]
+            self.sources = [self._add_bos_eos_token(sentence) for sentence in self.sources]
+            self.targets = [self._add_bos_eos_token(sentence) for sentence in self.targets]
 
     def _add_bos_eos_token(self, sentence: str):
         if not sentence.startswith(self.bos_token):
@@ -45,7 +45,7 @@ class TabularDatasetForTranslator(Dataset):
         return sentence
 
     def __len__(self):
-        return len(self.from_lang)
+        return len(self.sources)
 
     def __getitem__(self, idx: int):
-        return self.from_lang[idx], self.to_lang[idx]
+        return self.sources[idx], self.targets[idx]
