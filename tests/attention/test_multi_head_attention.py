@@ -96,6 +96,6 @@ def test_concat_method(multi_head_attention_base):
 
 def test_forward(multi_head_attention_base):
     x = torch.rand((10, 13, 2))
-    output = multi_head_attention_base.forward(x)
+    output = multi_head_attention_base.forward(x, x, x)
 
     np.testing.assert_array_equal(x.shape, output.shape)

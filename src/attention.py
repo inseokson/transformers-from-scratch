@@ -41,9 +41,9 @@ class MultiHeadAttention(nn.Module):
         self.w_v = nn.Linear(d_model, n_heads * d_attention, bias=False)
         self.w_o = nn.Linear(n_heads * d_attention, d_model, bias=False)
 
-    def forward(self, x, mask=None):
-        q, k, v = self.split(self.w_q(x)), self.split(self.w_k(x)), self.split(self.w_v(x))
-        out = self.attention(q, k, v, mask)
+    def forward(self, q, k, v, mask=None):
+        _q, _k, _v = self.split(self.w_q(q)), self.split(self.w_k(k)), self.split(self.w_v(v))
+        out = self.attention(_q, _k, _v, mask)
         out = self.concat(out)
         out = self.w_o(out)
 
