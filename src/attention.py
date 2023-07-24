@@ -17,7 +17,7 @@ class ScaledDotProductAttention(Attention):
 
     def forward(self, q, k, v, mask=None):
         # q, k, v: (n_batch, seqeunce_length, d_attention) or \
-        #  (n_batch, n_head, sequence_length, d_attention)
+        #  (n_batch, n_heads, sequence_length, d_attention)
         k_t = k.transpose(-2, -1)
         score = q @ k_t / self.normalize_factor
         if mask is not None:
@@ -30,16 +30,16 @@ class ScaledDotProductAttention(Attention):
 
 
 class MultiHeadAttention(nn.Module):
-    def __init__(self, n_head, d_model, d_attention, attention: Type[Attention] = ScaledDotProductAttention):
+    def __init__(self, n_heads, d_model, d_attention, attention: Type[Attention] = ScaledDotProductAttention):
         super().__init__()
-        self.n_head = n_head
+        self.n_heads = n_heads
         self.d_attention = d_attention
-        self.attention = attention(n_head=n_head, d_model=d_model, d_attention=d_attention)
+        self.attention = attention(n_heads=n_heads, d_model=d_model, d_attention=d_attention)
 
-        self.w_q = nn.Linear(d_model, n_head * d_attention, bias=False)
-        self.w_k = nn.Linear(d_model, n_head * d_attention, bias=False)
-        self.w_v = nn.Linear(d_model, n_head * d_attention, bias=False)
-        self.w_o = nn.Linear(n_head * d_attention, d_model, bias=False)
+        self.w_q = nn.Linear(d_model, n_heads * d_attention, bias=False)
+        self.w_k = nn.Linear(d_model, n_heads * d_attention, bias=False)
+        self.w_v = nn.Linear(d_model, n_heads * d_attention, bias=False)
+        self.w_o = nn.Linear(n_heads * d_attention, d_model, bias=False)
 
     def forward(self, x, mask=None):
         q, k, v = self.split(self.w_q(x)), self.split(self.w_k(x)), self.split(self.w_v(x))
@@ -51,12 +51,12 @@ class MultiHeadAttention(nn.Module):
 
     def split(self, x):
         n_batch, seq_length, _ = x.shape
-        x = x.reshape(n_batch, seq_length, self.n_head, self.d_attention).transpose(1, 2)
+        x = x.reshape(n_batch, seq_length, self.n_heads, self.d_attention).transpose(1, 2)
 
         return x
 
     def concat(self, x):
         n_batch, _, seq_length, _ = x.shape
-        x = x.transpose(1, 2).reshape(n_batch, seq_length, self.n_head * self.d_attention)
+        x = x.transpose(1, 2).reshape(n_batch, seq_length, self.n_heads * self.d_attention)
 
         return x
