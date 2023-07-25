@@ -2,6 +2,7 @@ from pathlib import Path, PosixPath
 from typing import Union
 
 import pandas as pd
+import torch
 from torch.utils.data import Dataset
 
 
@@ -49,3 +50,11 @@ class TabularDataset(Dataset):
 
     def __getitem__(self, idx: int):
         return self.sources[idx], self.targets[idx]
+
+
+def create_pad_mask(pad_mask):
+    return pad_mask.unsqueeze(1).unsqueeze(2)
+
+
+def create_look_ahead_mask(max_length):
+    return (1 - torch.tril(torch.ones(max_length, max_length))).type(torch.ByteTensor)
